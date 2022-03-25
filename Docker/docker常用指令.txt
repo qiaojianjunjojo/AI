@@ -1,0 +1,52 @@
+使用Dockerfile构建images
+docker build -t qjj/node14 .
+额外指定要使用的网络
+docker build -t  qjj/python3-flask-oracle  --network=bridge1 .   
+
+使用images create&start container
+docker run -it  --network=bridge1 --name qjj-easy-api-python-flask -d -p 40117:5000 orderinds/ubuntu-python3.7:latest
+docker run -it  --network=bridge1 --name qjjnginx -d -p 40111:80 \
+ -v /home/qjj/nginx_demo1/nginx.conf:/etc/nginx/nginx.conf  qjj/nginx /bin/bash/
+docker run -d -p 40119:5000 -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data --restart=always portainer/portainer
+--rm参数 容器任务完成后自动清除，与-d 参数不可同时使用
+orderinds/ubuntu-python3.7:latest
+docker logs node14qjj
+
+docker commit -m "Description" -a "qjj" 12e53a4931cf qjj/node14:V1.0
+
+docker exec ：在运行的容器中执行命令
+docker exec -it mynginx /bin/sh /root/youj.sh
+docker exec -i -t  mynginx /bin/bash
+	
+docker attach 是Docker自带的命令,进入Docker容器
+
+docker cp 命令用于容器与主机之间的数据拷贝
+主机到容器：
+docker cp /www 96f7f14e99ab:/www/
+docker cp /home/qjj/flask.conf 	612210f6f160:/flask.conf
+docker cp /home/qjj/uwsgi.ini 	612210f6f160:/uwsgi.ini
+docker cp /home/qjj/app.py 	612210f6f160:/app.py
+容器到主机：
+docker cp 96f7f14e99ab:/www /tmp/
+
+当利用 docker run 来创建启动容器时，Docker 在后台运行的标准操作包括：
+
+检查本地是否存在指定的镜像，不存在就从公有仓库下载
+利用镜像创建并启动一个容器
+分配一个文件系统，并在只读的镜像层外面挂载一层可读写层
+从宿主主机配置的网桥接口中桥接一个虚拟接口到容器中去
+从地址池配置一个 ip 地址给容器
+执行用户指定的应用程序
+执行完毕后容器被终止
+
+docker tag ubuntu:14.04 10.0.2.2:5000/test
+docker images
+docker push 10.0.2.2:5000/test
+docker pull 10.0.0.2:5000/test
+
+数据卷备份恢复
+docker run --volumes-from dbdata -v $(pwd):/backup --name dbback ubuntu tar cvf /backup/backup.tar /dbdata
+docker run -v /dbdata --name dbdata2 ubuntu /bin/bash
+docker run --volumes-from dbdata2 -v $(pwd):/backup ubuntu tar xcf /backup/backup.tar
+
+ln -s /flask.conf /etc/nginx/conf.d/
