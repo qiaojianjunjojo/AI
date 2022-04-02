@@ -1,0 +1,24 @@
+CUDA_VISIBLE_DEVICES=-1 python legacy/eval.py \
+   --logtostderr \
+   --pipeline_config_path ssd_resnet50_v1_fpn_shared_box_predictor_640x640_coco14_sync_2018_07_03.config\
+   --checkpoint_dir=training  \
+   --eval_dir=images/test
+
+tensorboard --logdir=images/test
+
+ps aux | grep 'tensorboard' 
+
+kill 4405
+
+CUDA_VISIBLE_DEVICES=-1 python legacy/eval.py \
+   --logtostderr \
+   --pipeline_config_path faster_rcnn_inception_v2_pets.config\
+   --checkpoint_dir=training  \
+   --eval_dir=images/test
+
+images1¤U¡G
+CUDA_VISIBLE_DEVICES=-1 python eval.py \
+   --logtostderr \
+   --pipeline_config_path ssd_resnet50_v1_fpn_shared_box_predictor_640x640_coco14_sync_2018_07_03.config\
+   --checkpoint_dir=training  \
+   --eval_dir=test

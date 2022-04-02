@@ -1,0 +1,30 @@
+tensorflow_GPU_1.9(Windows+Anaconda)CUDA 9.2+Cudnn7.1.4-------------------------------
+C:\> conda create -n tensorflow_cuda python=3.6
+C:\> activate tensorflow_cuda
+#下載民間大神版本https://github.com/fo40225/tensorflow-windows-wheel
+#https://github.com/fo40225/tensorflow-windows-wheel/raw/master/1.9.0/py36/GPU/cuda92cudnn71sse2/tensorflow_gpu-1.9.0-cp36-cp36m-win_amd64.whl
+C:\> pip install tensorflow_gpu-1.9.0-cp36-cp36m-win_amd64.whl
+C:\> pip install keras==2.2.4
+C:\> pip install Pillow
+C:\> pip install pyinstaller
+C:\> pip install opencv_python
+C:\> pip uninstall numpy
+C:\> pip install numpy==1.16
+C:\> pip install requests
+C:\> pip install matplotlib
+C:\> pip install pyoracle
+C:\> pip install pandas
+C:\> pip install --upgrade --user nbconvert
+C:\> conda install jupyter notebook
+# python檔裡面要加入import numpy.core._dtype_ctypes才能封裝成功
+
+-------------------------------安裝tensorflow_CPU(Windows+Anaconda)-------------------------------  
+C:\> conda create -n tensorflow python=3.5
+C:\> activate tensorflow
+C:\> pip install https://storage.googleapis.com/tensorflow/windows/cpu/tensorflow-1.12.0-cp35-cp35m-win_amd32.whl
+C:\> pip install keras
+C:\> pip install Pillow
+C:\> pip install pyinstaller
+C:\> pip install opencv_python
+C:\> pip install cx_oracle
+C:\> pip install pandas

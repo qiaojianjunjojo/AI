@@ -1,0 +1,98 @@
+1.原圖分類 OK NG各388張照片 原始格式 8800*2904 (BMP格式) 24.3MB
+2.圖片使用XnConvert批次轉檔 轉換格式 1366*450  (JPG格式) 60KB
+3.使用labelImg標記出OK NG位置
+4.挑選300張照片用來訓練，240張用來Train，60張用來Test(Valid),剩下88張用來Inference
+TrainImageNG128-TrainImageNG368(Train)+TrainImageNG369-TrainImageNG428(Test)
+TrainImageOK1-TrainImageOK240(Train)+TrainImageOK241-TrainImageOK300(Test)
+
+====Tensorflow Objectdetection API====
+1.使用python xml_to_csv.py 把XML轉成CSV格式
+2.修改generate_tfrecords.py符合我們的classes
+3.使用generate_tfrecord.py轉換tfrecord 
+
+python generate_tfrecord.py --csv_input=images/train/train_labels.csv --image_dir=images/train --output_path=train.record
+python generate_tfrecord.py --csv_input=images/test/test_labels.csv --image_dir=images/test --output_path=test.record
+UPDISE DOWN
+
+python generate_tfrecord.py --csv_input=train_labels.csv --image_dir=images/train --output_path=train.record
+python generate_tfrecord.py --csv_input=test_labels.csv --image_dir=images/test --output_path=test.record
+【標註生產的.xml】 -->【.csv 】-->【 .record】(可用於訓練的數據)
+
+4.Creating a label map
+5.下載faster_rcnn_inception_v2_pets.config 修改，客製化自己的config file(配置training pipeline) 
+  Line9:num_classes修改為2
+  Line106:change fine_tune_checkpoint to the path of the model.ckpt file (faster_rcnn_inception_v2_coco_2018_01_28)
+  Line 123:change input_path to the path of the train.records file:
+  Line 135: change input_path to the path of the test.records file:
+  Line 125–137: change label_map_path to the path of the label map:
+  Line 130: change num_example to the number of images in your test folder. (120)
+
+6.Copy object_detection/legacy/train.py file to object_detection folder 
+
+7.CUDA_VISIBLE_DEVICES=1 python train.py --logtostderr --train_dir=training/ --pipeline_config_path=ssd_resnet50_v1_fpn_shared_box_predictor_640x640_coco14_sync_2018_07_03.config
+	
+8.tensorboard --logdir=training
+
+9.訓練費時15小時47分鐘完成(20萬Steps)
+
+9.Exporting inference graph(將結果匯出)
+
+python export_inference_graph.py --input_type image_tensor --pipeline_config_path faster_rcnn_inception_v2_pets.config --trained_checkpoint_prefix training/model.ckpt-200000 --output_directory inference_graph
+
+python export_inference_graph.py --input_type image_tensor --pipeline_config_path faster_rcnn_inception_v2_pets.config --trained_checkpoint_prefix training/model.ckpt-18247 --output_directory inference_graph
+
+
+
+CUDA_VISIBLE_DEVICES=1 python export_inference_graph.py --input_type image_tensor --pipeline_config_path ssd_resnet50_v1_fpn_shared_box_predictor_640x640_coco14_sync_2018_07_03.config --trained_checkpoint_prefix training/model.ckpt-25000 --output_directory inference_graph
+
+10.計算M/N/A/B 值
+
+175張照片 用時 395.508085 sec 
+平均每張照片Inference 2.25秒 (1366*450 @ JPG)
+
+10張照片 用時 It cost 253.105436 sec
+平均每張照片Inference 25.3秒 (8800*2904 @ JPG)
+
+Sssss
+
+
+
+ImportError: No module named 'nets'問題的解決方法
+
+在reaserach資料夾底下輸入:
+export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
+
+Valuesrror:no variables to save
+
+在客化自己config檔時， 設定路徑   fine_tune_checkpoint: "faster_rcnn_inception_v2_coco_2018_01_28/model.ckpt"
+                                  from_detection_checkpoint: true
+                                  load_all_detection_checkpoint_vars: true
+加入下面2行。
+
+
+
+"/tensorflow_data/models/research/object_detection/images/train/train_labels.csv"
+
+
+
+指定GPU運行python程序   ：CUDA_VISIBLE_DEVICES=2 python train.py
+
+Note:
+
+歪斜照片:NG184/194/216/474
+
+
+export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
+
+
+
+。
+  
+
+gitlab-runner register \
+--non-interactive \
+--url "http://hp08900w.cminl.oa/gitlab/" \
+--registration-token "sHyTRY2kKMvwxxJzRhuy" \
+--executor "shell" \
+--description "smt" \
+--tag-list "smt_tag"
